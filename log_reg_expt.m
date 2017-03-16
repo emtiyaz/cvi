@@ -3,6 +3,7 @@
 
 clear all; close all;
 % Dataset (it could be 'a1a', 'breast_cancer_scale' 'australian_scale' 'covtype_binary_scale' 'a7a')
+% If you want to see quick results, please run a1a
 dataset_name = 'covtype_binary_scale';
 % Baselines to compare against
 baselines = {'PG-exact', 'SnK-FG', 'SnK-alg2', 'Chol'};
