@@ -139,6 +139,7 @@ case {'breast_cancer_scale'}
 otherwise
   error('no such name');
 end
+end
 
 function [XTr, yTr, XTe, yTe] = split_data(y, X, prop)
 
