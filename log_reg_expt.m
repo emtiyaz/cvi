@@ -121,7 +121,7 @@ function [delta algo_params] = get_expt_params(dataset_name, algo)
    switch dataset_name
    case 'a1a'
       delta = 2.8072;
-      maxItersInfer=5;
+      maxItersInfer=100;
    case {'a7a'}
       delta = 5;
       maxItersInfer=210;
@@ -133,7 +133,7 @@ function [delta algo_params] = get_expt_params(dataset_name, algo)
       maxItersInfer=120;
    case {'covtype_binary_scale'}
       delta =  0.0020;
-      maxItersInfer=10;%960;
+      maxItersInfer=960;
    otherwise
       error('Unknown dataset name')
    end
