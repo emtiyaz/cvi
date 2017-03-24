@@ -58,7 +58,7 @@ for i=1:nrSteps
         zVar = vv0-sum(v.*v,1)';
         zMean = XX*natpar_meanTimesPrec - v'*v*natpar_meanTimesPrec;
     else
-        %For "big n  and small p" problem
+        %For "big n and small p" problem
         % get posterior for beta
         cholP = chol(features'*(features.*repmat(natpar_prec,1,k)) + priorPrec);
         meanTimesPrec = features'*natpar_meanTimesPrec + priorMeanTimesPrec;
@@ -114,6 +114,7 @@ end
 end
 
 function [XXs12, XXs22, XYs1, XYs2] = get_samples(y,zMean,zVar,n,S)
+%Modified by Wu Lin
 % sample - we use antithetics, this simplifies the inverses
 rn = randn(n,S);
 r = [rn -rn];
@@ -132,6 +133,7 @@ end
 
 
 function [grad] = likLogistic_grad(y,f)
+%Written by Wu Lin
 y = y>0;
 %check = unique(y);
 %assert( length(check) ==2 )

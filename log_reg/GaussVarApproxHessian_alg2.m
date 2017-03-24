@@ -29,7 +29,7 @@ a = zeros(k,1);
 % do stochastic approximation
 for i=1:nrSteps
     tic;
-    % cholesky of current inverse variance matrix
+    % cholesky factor of current inverse variance matrix
     cholP = chol(P);
     % sample
     xMean = cholP\(cholP'\a) + z;
