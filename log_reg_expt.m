@@ -3,8 +3,8 @@
 
 clear all; close all;
 % Dataset (it could be 'a1a', 'breast_cancer_scale' 'australian_scale' 'covtype_binary_scale' 'a7a')
-% If you want to see quick results, please run a1a
-dataset_name = 'covtype_binary_scale';
+% If you want to see quick results, run 'a1a'
+dataset_name = 'colon-cancer';
 % Baselines to compare against
 baselines = {'PG-exact', 'SnK-FG', 'SnK-alg2', 'Chol'};
 
@@ -13,9 +13,9 @@ seed = 1;
 [y, X, y_te, X_te] = get_data_log_reg(dataset_name, seed);
 [N, D] = size(X);
 
-% get delta (noise precision of the prior) and algorithmic parameters
+% get delta (noise variance of the prior) and algorithmic parameters
 [delta, algo_params] = get_expt_params(dataset_name, 'CVI');
-deltas = [1e-4; delta.*ones(D-1,1)]; % prior precision
+deltas = [1e-4; delta.*ones(D-1,1)]; % prior variance 
 
 % we will record loss vs time
 log_loss = []; time = [];
@@ -76,13 +76,15 @@ for i = 1:length(baselines)+1
    semilogx(time{i}, log_loss{i}, 'marker', markers{i}, 'color', colors(i,:), 'linewidth', 3, 'markersize', 15, 'markerfacecolor', [1 1 1]);
    hold on
 end
+algos = {'cvi', baselines{:}};
+legend(algos);
 
 function [m,v] = bayes_lin_reg(X, tlam_1, tlam_2, deltas, X_te)
 % compute predictive mean and variance of X_te given data X
 % for Bayesian linear regression with ty = X*w + eps
 % observations ty := tlam_1/(-2*tlam_2),
 % noise variance sig2 := 1/(-2*tlam_2),
-% and prior precision of w as deltas
+% and prior variance of w as deltas
 
    [N,D] = size(X);
    % convert to precision
@@ -163,12 +165,16 @@ function [delta algo_params] = get_expt_params(dataset_name, algo)
            beta = 0.4;
            switch algo
            case {'Chol'} ;
+               maxItersInfer = 50;
            case {'CVI-exact', 'PG-exact'}
                algo_params.beta = beta;
+               maxItersInfer = 10;
            case {'CVI'}
                algo_params.beta = beta;
+               maxItersInfer = 10;
            case {'SnK-alg2','SnK-FG'};
                algo_params.beta = beta/(1+beta);
+               maxItersInfer = 10;
            end
        case {'covtype_binary_scale'}
            beta = 0.3;
@@ -177,10 +183,10 @@ function [delta algo_params] = get_expt_params(dataset_name, algo)
                maxItersInfer = 50;
            case {'CVI-exact', 'PG-exact'}
                algo_params.beta = beta;
-               maxItersInfer = 10;
+               maxItersInfer = 5;
            case {'CVI'}
                algo_params.beta = beta;
-               maxItersInfer = 2;
+               maxItersInfer = 5;
            case {'SnK-alg2'}
                algo_params.beta = beta/(1+beta);
                maxItersInfer = 10;
@@ -192,12 +198,16 @@ function [delta algo_params] = get_expt_params(dataset_name, algo)
            beta = 0.4;
            switch algo
            case {'Chol'} ;
+               maxItersInfer = 50;
            case {'CVI-exact', 'PG-exact'}
                algo_params.beta = beta;
+               maxItersInfer = 10;
            case {'CVI'};
                algo_params.beta = beta;
+               maxItersInfer = 10;
            case {'SnK-alg2','SnK-FG'}
                algo_params.beta = beta/(1+beta);
+               maxItersInfer = 10;
            end
        case {'breast_cancer_scale'}
            beta = 0.3;
