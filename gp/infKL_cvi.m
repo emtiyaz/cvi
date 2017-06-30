@@ -37,7 +37,7 @@ end
 for k = 1:kmax
   % Gaussian pseudo-observation
   pseudo_y = tlambda1./tlambda2;
-  sW = sqrt(abs(tlambda2)); % std of noise 
+  sW = sqrt(abs(tlambda2)); % noise precision 
 
   % GP regression update 
   L = chol(eye(n)+sW*sW'.*K);  
@@ -54,6 +54,8 @@ for k = 1:kmax
   % KL lower bound and assessing convergence
   if compute_marglik
     nlZ_kl = -sum(ll) - 0.5*(-2*sum(log(diag(L))) + sum(sW.*diag(L\T)) - alpha'*(post_m-m));
+    %nlZ_kl_1 = nlZ_kl - sum( -0*log(2*pi./tlambda2) - 0.5*(tlambda2).*((pseudo_y - post_m).^2 + post_v) );
+
     [~,~,~,~,nlZ_ep] = epComputeParams(K,y,tlambda2,tlambda1,lik,hyp,m,'infEP');
     if verbose, fprintf('ELBO: %.4f, EP-Estimate: %.4f \n', nlZ_kl, nlZ_ep), end;
     if test_convergence 
@@ -74,9 +76,9 @@ post.L = L;
 
 if nargout>1 % do we want nlZ?
   % the KL lower bound
-  % nlZ = -sum(ll) - 0.5*(-2*sum(log(diag(L))) + sum(sW.*diag(L\T)) - alpha'*(post_m-m));
+   nlZ = -sum(ll) - 0.5*(-2*sum(log(diag(L))) + sum(sW.*diag(L\T)) - alpha'*(post_m-m));
   % the EP estimate of marginal likelihood
-  [~,~,~,~,nlZ] = epComputeParams(K,y,tlambda2,tlambda1,lik,hyp,m,'infEP');
+  %[~,~,~,~,nlZ] = epComputeParams(K,y,tlambda2,tlambda1,lik,hyp,m,'infEP');
   if nargout>2                                           % do we want derivatives?
      % Yet to write the derivative
   end

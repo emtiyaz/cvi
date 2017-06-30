@@ -3,7 +3,7 @@ function [post nlZ dnlZ] = infKL_PG(hyp, mean, cov, lik, x, y)
 % Copyright (c) by Emtiyaz Khan, Wu Lin, and Hannes Nickisch 2016-07-16.
 
 % default algorithmic settings
-[beta, approx_method, tol, kmax, nSamples, verbose, test_convergence, compute_marglik] = myProcessOptions(hyp, 'step_size', 0.1, 'approx_method', 'gauss_hermite', 'tol', 1e-4, 'max_iters', 100, 'nSamples', -1, 'verbose', 0, 'test_convergence', 1, 'compute_marglik', 0);
+[beta, approx_method, tol, kmax, nSamples, verbose, test_convergence, compute_marglik] = myProcessOptions(hyp, 'step_size', 0.1, 'approx_method', 'gauss_hermite', 'tol', 1e-4, 'max_iters', 100, 'nSamples', -1, 'verbose', 0, 'test_convergence', 1, 'compute_marglik', 1);
 
 % likelihood and the GP prior
 lik_name = func2str(lik{:});
@@ -101,9 +101,9 @@ post.L = L;                                              % L'*L=B=eye(n)+sW*K*sW
 
 if nargout>1                                             %do we want nlZ?
   % the KL lower bound
-  %nlZ = -sum(ll) - 0.5*(-2*sum(log(diag(L))) + sum(sW.*diag(L\T)) - alpha'*(post_m-m));
-  tnu = alpha + tW.*post_m; ttau = tW;
-  [~,~,~,~,nlZ] = epComputeParams(K,y,ttau,tnu,lik,hyp,m,'infEP');
+  nlZ = -sum(ll) - 0.5*(-2*sum(log(diag(L))) + sum(sW.*diag(L\T)) - alpha'*(post_m-m));
+  %tnu = alpha + tW.*post_m; ttau = tW;
+  %[~,~,~,~,nlZ] = epComputeParams(K,y,ttau,tnu,lik,hyp,m,'infEP');
   if nargout>2                                           % do we want derivatives?
     % compute A = (eye(n)+K*diag(tW))\eye(n) = Sigma*inv(K)
     % by using the following: A = I - K*sW*inv(sW*K*sW + I)*sW

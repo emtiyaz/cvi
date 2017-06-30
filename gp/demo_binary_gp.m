@@ -11,7 +11,7 @@ clear all
 % Choose a dataset and an approximation for E(log p(y|f))
 seed = 147;
 data_name = 'usps_3vs5';%, 'usps_3vs5', 'sonar', 'housing'
-hyp.approx_method = 'monte_carlo'; % 'gauss_hermite', 'piecewise', 'monte_carlo'
+hyp.approx_method = 'piecewise'; % 'gauss_hermite', 'piecewise', 'monte_carlo'
 
 % get data
 [y, X, y_te, X_te] = get_data_gp(data_name, seed);
@@ -35,7 +35,7 @@ otherwise
 end
 
 % set step size and a few other hyperparameters
-hyp.verbose = 1; % set to 0 if you don't want display
+hyp.verbose = 0; % set to 0 if you don't want display
 switch hyp.approx_method
   case 'gauss_hermite';
     hyp.step_size = .5;
@@ -64,12 +64,12 @@ algos = {'infKL_cvi', 'infKL_PG','infEP'}; % compare against EP
 setSeed(1);
 for i = 1:length(algos)
   tic;
-  [~,~,m_hat,v_hat,log_p_hat,~,nlZ_ep(i)] = gp(hyp, algos{i}, mean_func, cov_func, lik_func, X, y, X_te, y_te);
+  [~,~,m_hat,v_hat,log_p_hat,~,nlZ(i)] = gp(hyp, algos{i}, mean_func, cov_func, lik_func, X, y, X_te, y_te);
   tt(i) = toc;
   
   % compute log_loss
   log_loss(i) = -mean(log_p_hat);
-  fprintf('%s, log_loss = %0.4f, nlZ_ep = %0.4f, took %1.1fs\n', algos{i}, log_loss(i), nlZ_ep(i), tt(i));
+  fprintf('%s, log_loss = %0.4f, nlZ = %0.4f, took %1.1fs\n', algos{i}, log_loss(i), nlZ(i), tt(i));
 end
 
 
