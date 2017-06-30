@@ -11,7 +11,7 @@ clear all
 % Choose a dataset and an approximation for E(log p(y|f))
 seed = 147;
 data_name = 'usps_3vs5';%, 'usps_3vs5', 'sonar', 'housing'
-hyp.approx_method = 'piecewise'; % 'gauss_hermite', 'piecewise', 'monte_carlo'
+hyp.approx_method = 'gauss_hermite'; % 'gauss_hermite', 'piecewise', 'monte_carlo'
 
 % get data
 [y, X, y_te, X_te] = get_data_gp(data_name, seed);
