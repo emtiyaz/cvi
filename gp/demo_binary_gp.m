@@ -38,11 +38,11 @@ end
 hyp.verbose = 0; % set to 0 if you don't want display
 switch hyp.approx_method
   case 'gauss_hermite';
-    hyp.step_size = .5;
+    hyp.step_size = .3;
   case 'piecewise'; 
-    hyp.step_size = .5; 
+    hyp.step_size = .3; 
   case 'monte_carlo'; 
-    hyp.step_size = .5; 
+    hyp.step_size = .3; 
     hyp.nSamples = 100;
     hyp.test_convergence = 0;
     hyp.compute_marglik = 0;
@@ -62,7 +62,7 @@ hyp.lik = [];
 % run algos 
 algos = {'infKL_cvi', 'infKL_PG','infEP'}; % compare against EP
 setSeed(1);
-for i = 1:length(algos)
+for i = 1%:length(algos)
   tic;
   [~,~,m_hat,v_hat,log_p_hat,~,nlZ(i)] = gp(hyp, algos{i}, mean_func, cov_func, lik_func, X, y, X_te, y_te);
   tt(i) = toc;

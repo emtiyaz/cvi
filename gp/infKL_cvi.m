@@ -53,11 +53,21 @@ for k = 1:kmax
 
   % KL lower bound and assessing convergence
   if compute_marglik
-    nlZ_kl = -sum(ll) - 0.5*(-2*sum(log(diag(L))) + sum(sW.*diag(L\T)) - alpha'*(post_m-m));
-    %nlZ_kl_1 = nlZ_kl - sum( -0*log(2*pi./tlambda2) - 0.5*(tlambda2).*((pseudo_y - post_m).^2 + post_v) );
+    % direct computation of the lower bound
+    %nlZ_kl = -sum(ll) - 0.5*(-2*sum(log(diag(L))) + sum(sW.*diag(L\T)) - alpha'*(post_m-m));
 
+    % a different computation relying on the GP regression
+    % first two terms are from nlZ of GP reg
+    % the next two terms are E_q[log p(y_n|z_n)|Gauss(y_n|z_n)]
+    nlZ_kl = (pseudo_y-m)'*alpha/2 + sum(log(diag(L))) ...
+               - sum(0.5*(tlambda2).*((pseudo_y - post_m).^2 + post_v) ) -sum(ll);
+
+    % EP parameters 
     [~,~,~,~,nlZ_ep] = epComputeParams(K,y,tlambda2,tlambda1,lik,hyp,m,'infEP');
+
     if verbose, fprintf('ELBO: %.4f, EP-Estimate: %.4f \n', nlZ_kl, nlZ_ep), end;
+    %fprintf('ELBO: %.4f, %.4f \n', nlZ_kl, nlZ_ep)
+
     if test_convergence 
       % doesn't work well for monte-carlo
       if k == 1; nlZ_old = nlZ_kl; end;
@@ -76,11 +86,16 @@ post.L = L;
 
 if nargout>1 % do we want nlZ?
   % the KL lower bound
-   nlZ = -sum(ll) - 0.5*(-2*sum(log(diag(L))) + sum(sW.*diag(L\T)) - alpha'*(post_m-m));
+   %nlZ = -sum(ll) - 0.5*(-2*sum(log(diag(L))) + sum(sW.*diag(L\T)) - alpha'*(post_m-m));
+   nlZ = (pseudo_y-m)'*alpha/2 + sum(log(diag(L))) ...
+               - sum(0.5*(tlambda2).*((pseudo_y - post_m).^2 + post_v) ) -sum(ll);
+
   % the EP estimate of marginal likelihood
   %[~,~,~,~,nlZ] = epComputeParams(K,y,tlambda2,tlambda1,lik,hyp,m,'infEP');
-  if nargout>2                                           % do we want derivatives?
-     % Yet to write the derivative
+
+  if nargout>2          % do we want derivatives?
+   % Still working on it
+
   end
 end
 
