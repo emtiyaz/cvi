@@ -136,6 +136,9 @@ function [delta algo_params] = get_expt_params(dataset_name, algo)
    case {'covtype_binary_scale'}
       delta =  0.0020;
       maxItersInfer=960;
+   case {'colon-cancer'}
+      delta = 596.362332;
+      maxItersInfer=10;
    otherwise
       error('Unknown dataset name')
    end
@@ -210,6 +213,17 @@ function [delta algo_params] = get_expt_params(dataset_name, algo)
                maxItersInfer = 10;
            end
        case {'breast_cancer_scale'}
+           beta = 0.3;
+           switch algo
+           case {'Chol'} ;
+           case {'CVI-exact', 'PG-exact'}
+               algo_params.beta = beta;
+           case {'CVI'}
+               algo_params.beta = beta;
+           case {'SnK-alg2','SnK-FG'}
+               algo_params.beta = beta/(1+beta);
+           end
+       case 'colon-cancer'
            beta = 0.3;
            switch algo
            case {'Chol'} ;
